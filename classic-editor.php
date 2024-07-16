@@ -472,7 +472,7 @@ class Classic_Editor {
 				<th scope="row"><?php _e( 'Default Editor', 'classic-editor' ); ?></th>
 				<td>
 				<?php wp_nonce_field( 'allow-user-settings', 'classic-editor-user-settings' ); ?>
-				<?php self::settings_1( $user->ID ); ?>
+				<?php self::settings_1( $user_id ); ?>
 				</td>
 			</tr>
 		</table>
