@@ -449,7 +449,7 @@ class Classic_Editor {
 	/**
 	 * Shown on the Profile page when allowed by admin.
 	 */
-	public static function user_settings( $user ) {
+	public static function user_settings( $user = null ) {
 		global $user_can_edit;
 		$settings = self::get_settings( 'update' );
 
@@ -458,6 +458,12 @@ class Classic_Editor {
 			! $settings['allow-users']
 		) {
 			return;
+		}
+		
+		if ( isset( $user->ID ) && $user->ID > 0 ) {
+			$user_id = $user->ID;
+		} else {
+			$user_id = 0;
 		}
 
 		?>
