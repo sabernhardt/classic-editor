@@ -453,15 +453,12 @@ class Classic_Editor {
 		global $user_can_edit;
 		$settings = self::get_settings( 'update' );
 
-		if (
-			! $user_can_edit ||
-			! $settings['allow-users']
-		) {
+		if ( ! $user_can_edit || ! $settings['allow-users'] ) {
 			return;
 		}
 		
-		if ( isset( $user->ID ) && $user->ID > 0 ) {
-			$user_id = $user->ID;
+		if ( $user instanceof WP_User ) {
+			$user_id = (int) $user->ID;
 		} else {
 			$user_id = 0;
 		}
