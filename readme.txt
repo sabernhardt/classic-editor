@@ -29,6 +29,9 @@ By default, this plugin hides all functionality available in the new block edito
 
 == Changelog ==
 
+= 1.6.5 =
+* Added fix for Safari 18 negative horizontal margin on floats.
+
 = 1.6.4 =
 * Added support for administrators to choose the default editor for other users.
 
