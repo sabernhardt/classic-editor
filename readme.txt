@@ -30,7 +30,7 @@ By default, this plugin hides all functionality available in the new block edito
 == Changelog ==
 
 = 1.6.6 =
-* Added fix for selecting/deselecting multiple unwanted categories in WordPress 6.7.1 when clicking on a Category checkbox on the old Edit Post screen.
+* Added fix for selecting/deselecting multiple unwanted categories in WordPress 6.7.1 when clicking on a category checkbox on the old Edit Post screen.
 
 = 1.6.5 =
 * Added fix for Safari 18 negative horizontal margin on floats.
