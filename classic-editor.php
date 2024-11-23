@@ -69,7 +69,7 @@ class Classic_Editor {
 		// Fix for Safari 18 negative horizontal margin on floats.
 		add_action( 'admin_print_styles', array( __CLASS__, 'safari_18_temp_fix' ) );
 
-		// Fix for the Categories postbox fro WP 6.7.1.
+		// Fix for the Categories postbox for WP 6.7.1.
 		global $wp_version;
 
 		if ( '6.7.1' === $wp_version && is_admin() ) {
