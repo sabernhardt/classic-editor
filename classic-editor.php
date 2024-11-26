@@ -69,11 +69,21 @@ class Classic_Editor {
 		// Fix for Safari 18 negative horizontal margin on floats.
 		add_action( 'admin_print_styles', array( __CLASS__, 'safari_18_temp_fix' ) );
 
-		// Fix for the Categories postbox for WP 6.7.1.
+		/**
+		 * Temporary fix for the Categories postbox on the classic Edit Post screen.
+		 * See: https://core.trac.wordpress.org/ticket/62504.
+		 */
 		global $wp_version;
 
 		if ( '6.7.1' === $wp_version && is_admin() ) {
-			add_action( 'wp_default_scripts', array( __CLASS__, 'replace_post_js' ), 11 );
+			add_filter( 'script_loader_src', function( $src, $handle ) {
+				if ( 'post' === $handle && false === strpos( $src, 'ver=62504-20241121' ) ) {
+					$suffix = wp_scripts_get_suffix();
+					$source = plugins_url( 'scripts/', __FILE__ ) . "post{$suffix}.js";
+					$src    = add_query_arg( 'ver', '62504-20241121', $source );
+				}
+				return $src;
+			}, 11, 2 );
 		}
 
 		if ( ! $block_editor && ! $gutenberg  ) {
@@ -1004,34 +1014,6 @@ class Classic_Editor {
 			}
 			</style>
 			<?php
-		}
-	}
-
-	/**
-	 * Temporary fix for the Categories postbox on the classic Edit Post screen.
-	 * See: https://core.trac.wordpress.org/ticket/62504.
-	 */
-	public static function replace_post_js( $scripts ) {
-		$script = $scripts->query( 'post', 'registered' );
-		$suffix = wp_scripts_get_suffix();
-
-		if ( $script ) {
-			if ( '62504-20241121' === $script->ver ) {
-				// The script src was replaced from another plugin.
-				return;
-			}
-
-			$script->src = plugins_url( 'scripts/', __FILE__ ) . "post{$suffix}.js";
-			$script->ver = '62504-20241121';
-		} else {
-			$scripts->add(
-				'post',
-				plugins_url( 'scripts/', __FILE__ ) . "post{$suffix}.js",
-				array( 'suggest', 'wp-lists', 'postbox', 'tags-box', 'underscore', 'word-count', 'wp-a11y', 'wp-sanitize', 'clipboard' ),
-				'62504-20241121',
-				1
-			);
-			$scripts->set_translations( 'post' );
 		}
 	}
 }
