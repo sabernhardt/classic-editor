@@ -5,7 +5,7 @@
  * Plugin Name: Classic Editor
  * Plugin URI:  https://wordpress.org/plugins/classic-editor/
  * Description: Enables the WordPress classic editor and the old-style Edit Post screen with TinyMCE, Meta Boxes, etc. Supports the older plugins that extend this screen.
- * Version:     1.6.6
+ * Version:     1.6.7
  * Author:      WordPress Contributors
  * Author URI:  https://github.com/WordPress/classic-editor/
  * License:     GPLv2 or later
@@ -69,21 +69,11 @@ class Classic_Editor {
 		// Fix for Safari 18 negative horizontal margin on floats.
 		add_action( 'admin_print_styles', array( __CLASS__, 'safari_18_temp_fix' ) );
 
-		/**
-		 * Temporary fix for the Categories postbox on the classic Edit Post screen.
-		 * See: https://core.trac.wordpress.org/ticket/62504.
-		 */
+		// Fix for the Categories postbox on the classic Edit Post screen for WP 6.7.1.
 		global $wp_version;
 
 		if ( '6.7.1' === $wp_version && is_admin() ) {
-			add_filter( 'script_loader_src', function( $src, $handle ) {
-				if ( 'post' === $handle && false === strpos( $src, 'ver=62504-20241121' ) ) {
-					$suffix = wp_scripts_get_suffix();
-					$source = plugins_url( 'scripts/', __FILE__ ) . "post{$suffix}.js";
-					$src    = add_query_arg( 'ver', '62504-20241121', $source );
-				}
-				return $src;
-			}, 11, 2 );
+			add_filter( 'script_loader_src', array( __CLASS__, 'replace_post_js_2' ), 11, 2 );
 		}
 
 		if ( ! $block_editor && ! $gutenberg  ) {
@@ -1015,6 +1005,26 @@ class Classic_Editor {
 			</style>
 			<?php
 		}
+	}
+
+	// Back-compat
+	public static function replace_post_js( $scripts ) {
+		_deprecated_function( __METHOD__, '1.6.7' );
+	}
+
+	/**
+	 * Fix for the Categories postbox on the classic Edit Post screen for WP 6.7.1.
+	 * See: https://core.trac.wordpress.org/ticket/62504 and 
+	 * https://github.com/WordPress/classic-editor/issues/222.
+	 */
+	public static function replace_post_js_2( $src, $handle ) {
+		if ( 'post' === $handle && is_string( $src ) && false === strpos( $src, 'ver=62504-20241121' ) ) {
+			$suffix = wp_scripts_get_suffix();
+			$src    = plugins_url( 'scripts/', __FILE__ ) . "post{$suffix}.js";
+			$src    = add_query_arg( 'ver', '62504-20241121', $src );
+		}
+
+		return $src;
 	}
 }
 
